@@ -1,17 +1,17 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { apiClient } from '../client.js';
+import { getApiClient } from '../client.js';
 
 export function registerTaskTools(server: McpServer): void {
   server.tool(
     'list_tasks',
-    '특정 프로젝트의 태스크 목록을 조회합니다.',
+    '프로젝트 태스크 목록 조회',
     {
-      projectId: z.string().describe('태스크를 조회할 프로젝트 ID'),
+      projectId: z.string(),
     },
     async ({ projectId }) => {
       try {
-        const response = await apiClient.get(`/api/projects/${projectId}/tasks`);
+        const response = await getApiClient().get(`/api/projects/${projectId}/tasks`);
         return {
           content: [{ type: 'text', text: JSON.stringify(response.data, null, 2) }],
         };
@@ -27,13 +27,13 @@ export function registerTaskTools(server: McpServer): void {
 
   server.tool(
     'get_task',
-    '특정 태스크의 상세 정보를 조회합니다.',
+    '태스크 상세 조회',
     {
-      taskId: z.string().describe('조회할 태스크 ID'),
+      taskId: z.string(),
     },
     async ({ taskId }) => {
       try {
-        const response = await apiClient.get(`/api/tasks/${taskId}`);
+        const response = await getApiClient().get(`/api/tasks/${taskId}`);
         return {
           content: [{ type: 'text', text: JSON.stringify(response.data, null, 2) }],
         };
@@ -49,14 +49,14 @@ export function registerTaskTools(server: McpServer): void {
 
   server.tool(
     'create_task',
-    '새 태스크를 생성합니다.',
+    '태스크 생성',
     {
-      projectId: z.string().describe('태스크를 생성할 프로젝트 ID'),
-      title: z.string().describe('태스크 이름'),
-      groupId: z.string().optional().describe('그룹 ID'),
-      assignees: z.array(z.string()).optional().describe('담당자 이메일 목록'),
-      status: z.enum(['pending', 'in_progress', 'completed']).optional().describe('태스크 상태'),
-      progress: z.number().min(0).max(100).optional().describe('진행률 (0~100)'),
+      projectId: z.string(),
+      title: z.string(),
+      groupId: z.string().optional(),
+      assignees: z.array(z.string()).optional().describe('담당자 이메일[]'),
+      status: z.enum(['pending', 'in_progress', 'completed']).optional(),
+      progress: z.number().min(0).max(100).optional().describe('0-100'),
     },
     async ({ projectId, title, groupId, assignees, status, progress }) => {
       try {
@@ -66,7 +66,7 @@ export function registerTaskTools(server: McpServer): void {
         if (status !== undefined) body.status = status;
         if (progress !== undefined) body.progress = progress;
 
-        const response = await apiClient.post(`/api/projects/${projectId}/tasks`, body);
+        const response = await getApiClient().post(`/api/projects/${projectId}/tasks`, body);
         return {
           content: [{ type: 'text', text: JSON.stringify(response.data, null, 2) }],
         };
@@ -82,14 +82,14 @@ export function registerTaskTools(server: McpServer): void {
 
   server.tool(
     'update_task',
-    '태스크를 수정합니다.',
+    '태스크 수정',
     {
-      taskId: z.string().describe('수정할 태스크 ID'),
-      title: z.string().optional().describe('새 태스크 이름'),
-      groupId: z.string().optional().describe('새 그룹 ID'),
-      assignees: z.array(z.string()).optional().describe('새 담당자 이메일 목록'),
-      status: z.enum(['pending', 'in_progress', 'completed']).optional().describe('새 상태'),
-      progress: z.number().min(0).max(100).optional().describe('새 진행률 (0~100)'),
+      taskId: z.string(),
+      title: z.string().optional(),
+      groupId: z.string().optional(),
+      assignees: z.array(z.string()).optional().describe('담당자 이메일[]'),
+      status: z.enum(['pending', 'in_progress', 'completed']).optional(),
+      progress: z.number().min(0).max(100).optional().describe('0-100'),
     },
     async ({ taskId, title, groupId, assignees, status, progress }) => {
       try {
@@ -100,7 +100,7 @@ export function registerTaskTools(server: McpServer): void {
         if (status !== undefined) body.status = status;
         if (progress !== undefined) body.progress = progress;
 
-        const response = await apiClient.patch(`/api/tasks/${taskId}`, body);
+        const response = await getApiClient().patch(`/api/tasks/${taskId}`, body);
         return {
           content: [{ type: 'text', text: JSON.stringify(response.data, null, 2) }],
         };
@@ -116,13 +116,13 @@ export function registerTaskTools(server: McpServer): void {
 
   server.tool(
     'delete_task',
-    '태스크를 삭제합니다.',
+    '태스크 삭제',
     {
-      taskId: z.string().describe('삭제할 태스크 ID'),
+      taskId: z.string(),
     },
     async ({ taskId }) => {
       try {
-        await apiClient.delete(`/api/tasks/${taskId}`);
+        await getApiClient().delete(`/api/tasks/${taskId}`);
         return {
           content: [{ type: 'text', text: `태스크 ${taskId} 삭제 완료` }],
         };

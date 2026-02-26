@@ -1,15 +1,15 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { apiClient } from '../client.js';
+import { getApiClient } from '../client.js';
 
 export function registerProjectTools(server: McpServer): void {
   server.tool(
     'list_projects',
-    'JJ Planner의 모든 프로젝트 목록을 조회합니다.',
+    '프로젝트 목록 조회',
     {},
     async () => {
       try {
-        const response = await apiClient.get('/api/projects');
+        const response = await getApiClient().get('/api/projects');
         return {
           content: [{ type: 'text', text: JSON.stringify(response.data, null, 2) }],
         };
@@ -25,13 +25,13 @@ export function registerProjectTools(server: McpServer): void {
 
   server.tool(
     'get_project',
-    '특정 프로젝트의 상세 정보를 조회합니다.',
+    '프로젝트 상세 조회',
     {
-      projectId: z.string().describe('조회할 프로젝트 ID'),
+      projectId: z.string(),
     },
     async ({ projectId }) => {
       try {
-        const response = await apiClient.get(`/api/projects/${projectId}`);
+        const response = await getApiClient().get(`/api/projects/${projectId}`);
         return {
           content: [{ type: 'text', text: JSON.stringify(response.data, null, 2) }],
         };

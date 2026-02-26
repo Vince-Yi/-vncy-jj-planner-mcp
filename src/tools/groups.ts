@@ -1,17 +1,17 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { apiClient } from '../client.js';
+import { getApiClient } from '../client.js';
 
 export function registerGroupTools(server: McpServer): void {
   server.tool(
     'list_groups',
-    '특정 프로젝트의 그룹 목록을 조회합니다.',
+    '프로젝트 그룹 목록 조회',
     {
-      projectId: z.string().describe('그룹을 조회할 프로젝트 ID'),
+      projectId: z.string(),
     },
     async ({ projectId }) => {
       try {
-        const response = await apiClient.get(`/api/projects/${projectId}/groups`);
+        const response = await getApiClient().get(`/api/projects/${projectId}/groups`);
         return {
           content: [{ type: 'text', text: JSON.stringify(response.data, null, 2) }],
         };

@@ -1,6 +1,6 @@
 {
   "name": "@vncy/jj-planner-mcp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "MCP Server for JJ Planner",
   "main": "dist/index.js",
   "bin": {
@@ -17,7 +17,7 @@
     "url": "https://github.com/Vince-Yi/-vncy-jj-planner-mcp.git"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "node --max-old-space-size=8192 ./node_modules/typescript/bin/tsc",
     "start": "node dist/index.js",
     "dev": "ts-node src/index.ts",
     "prepublishOnly": "npm run build"
@@ -25,7 +25,8 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
     "axios": "^1.7.0",
-    "dotenv": "^16.4.0"
+    "dotenv": "^16.4.0",
+    "zod": "^3.23.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

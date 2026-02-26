@@ -1,24 +1,24 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { apiClient } from '../client.js';
+import { getApiClient } from '../client.js';
 
 export function registerScheduleTools(server: McpServer): void {
   server.tool(
     'list_schedules',
-    '프로젝트 또는 특정 태스크의 일정 목록을 조회합니다.',
+    '일정 목록 조회',
     {
-      projectId: z.string().describe('일정을 조회할 프로젝트 ID'),
-      taskId: z.string().optional().describe('특정 태스크의 일정만 조회할 경우 태스크 ID'),
+      projectId: z.string(),
+      taskId: z.string().optional().describe('지정 시 해당 태스크 일정만 조회'),
     },
     async ({ projectId, taskId }) => {
       try {
         let response;
         if (taskId) {
-          response = await apiClient.get(`/api/tasks/${taskId}/schedules`, {
+          response = await getApiClient().get(`/api/tasks/${taskId}/schedules`, {
             params: { projectId },
           });
         } else {
-          response = await apiClient.get(`/api/projects/${projectId}/schedules`);
+          response = await getApiClient().get(`/api/projects/${projectId}/schedules`);
         }
         return {
           content: [{ type: 'text', text: JSON.stringify(response.data, null, 2) }],
@@ -35,15 +35,15 @@ export function registerScheduleTools(server: McpServer): void {
 
   server.tool(
     'create_schedule',
-    '태스크에 새 일정을 생성합니다.',
+    '태스크 일정 생성',
     {
-      taskId: z.string().describe('일정을 생성할 태스크 ID'),
-      projectId: z.string().describe('프로젝트 ID'),
-      startDate: z.string().describe('시작일 (YYYY-MM-DD)'),
-      startHalf: z.enum(['AM', 'PM']).describe('시작 반일 (AM 또는 PM)'),
-      endDate: z.string().describe('종료일 (YYYY-MM-DD)'),
-      endHalf: z.enum(['AM', 'PM']).describe('종료 반일 (AM 또는 PM)'),
-      title: z.string().optional().describe('일정 제목'),
+      taskId: z.string(),
+      projectId: z.string(),
+      startDate: z.string().describe('YYYY-MM-DD'),
+      startHalf: z.enum(['AM', 'PM']),
+      endDate: z.string().describe('YYYY-MM-DD'),
+      endHalf: z.enum(['AM', 'PM']),
+      title: z.string().optional(),
     },
     async ({ taskId, projectId, startDate, startHalf, endDate, endHalf, title }) => {
       try {
@@ -56,7 +56,7 @@ export function registerScheduleTools(server: McpServer): void {
         };
         if (title !== undefined) body.title = title;
 
-        const response = await apiClient.post(`/api/tasks/${taskId}/schedules`, body);
+        const response = await getApiClient().post(`/api/tasks/${taskId}/schedules`, body);
         return {
           content: [{ type: 'text', text: JSON.stringify(response.data, null, 2) }],
         };
@@ -72,14 +72,14 @@ export function registerScheduleTools(server: McpServer): void {
 
   server.tool(
     'update_schedule',
-    '일정을 수정합니다.',
+    '일정 수정',
     {
-      scheduleId: z.string().describe('수정할 일정 ID'),
-      startDate: z.string().optional().describe('새 시작일 (YYYY-MM-DD)'),
-      startHalf: z.enum(['AM', 'PM']).optional().describe('새 시작 반일 (AM 또는 PM)'),
-      endDate: z.string().optional().describe('새 종료일 (YYYY-MM-DD)'),
-      endHalf: z.enum(['AM', 'PM']).optional().describe('새 종료 반일 (AM 또는 PM)'),
-      title: z.string().optional().describe('새 일정 제목'),
+      scheduleId: z.string(),
+      startDate: z.string().optional().describe('YYYY-MM-DD'),
+      startHalf: z.enum(['AM', 'PM']).optional(),
+      endDate: z.string().optional().describe('YYYY-MM-DD'),
+      endHalf: z.enum(['AM', 'PM']).optional(),
+      title: z.string().optional(),
     },
     async ({ scheduleId, startDate, startHalf, endDate, endHalf, title }) => {
       try {
@@ -90,7 +90,7 @@ export function registerScheduleTools(server: McpServer): void {
         if (endHalf !== undefined) body.endHalf = endHalf;
         if (title !== undefined) body.title = title;
 
-        const response = await apiClient.patch(`/api/schedules/${scheduleId}`, body);
+        const response = await getApiClient().patch(`/api/schedules/${scheduleId}`, body);
         return {
           content: [{ type: 'text', text: JSON.stringify(response.data, null, 2) }],
         };
@@ -106,13 +106,13 @@ export function registerScheduleTools(server: McpServer): void {
 
   server.tool(
     'delete_schedule',
-    '일정을 삭제합니다.',
+    '일정 삭제',
     {
-      scheduleId: z.string().describe('삭제할 일정 ID'),
+      scheduleId: z.string(),
     },
     async ({ scheduleId }) => {
       try {
-        await apiClient.delete(`/api/schedules/${scheduleId}`);
+        await getApiClient().delete(`/api/schedules/${scheduleId}`);
         return {
           content: [{ type: 'text', text: `일정 ${scheduleId} 삭제 완료` }],
         };
