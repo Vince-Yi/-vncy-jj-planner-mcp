@@ -9,9 +9,17 @@ AI 에이전트(Cursor, Claude 등)와 프로젝트 관리 PWA인 [JJ Planner](h
 
 ## 설치
 
+**npm 설치 (권장):**
+
 ```bash
-git clone https://github.com/your-org/jj-planner-mcp.git
-cd jj-planner-mcp
+npm install -g @vncy/jj-planner-mcp
+```
+
+**소스에서 직접 빌드:**
+
+```bash
+git clone https://github.com/Vince-Yi/-vncy-jj-planner-mcp.git
+cd -vncy-jj-planner-mcp
 npm install
 npm run build
 ```
@@ -42,8 +50,8 @@ Cursor `mcp.json`에 아래 내용을 추가합니다:
 {
     "mcpServers": {
         "jj-planner": {
-            "command": "node",
-            "args": ["/절대경로/jj-planner-mcp/dist/index.js"],
+            "command": "npx",
+            "args": ["-y", "@vncy/jj-planner-mcp"],
             "env": {
                 "JJ_PLANNER_API_BASE_URL": "https://your-backend-url.com",
                 "JJ_PLANNER_API_KEY": "jjp_..."
@@ -61,8 +69,8 @@ Cursor `mcp.json`에 아래 내용을 추가합니다:
 {
     "mcpServers": {
         "jj-planner": {
-            "command": "node",
-            "args": ["/절대경로/jj-planner-mcp/dist/index.js"],
+            "command": "npx",
+            "args": ["-y", "@vncy/jj-planner-mcp"],
             "env": {
                 "JJ_PLANNER_API_BASE_URL": "https://your-backend-url.com",
                 "JJ_PLANNER_API_KEY": "jjp_..."

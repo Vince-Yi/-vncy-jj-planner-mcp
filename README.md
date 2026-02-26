@@ -9,9 +9,17 @@ An MCP (Model Context Protocol) server that connects AI agents (Cursor, Claude, 
 
 ## Installation
 
+**Via npm (recommended):**
+
 ```bash
-git clone https://github.com/your-org/jj-planner-mcp.git
-cd jj-planner-mcp
+npm install -g @vncy/jj-planner-mcp
+```
+
+**From source:**
+
+```bash
+git clone https://github.com/Vince-Yi/-vncy-jj-planner-mcp.git
+cd -vncy-jj-planner-mcp
 npm install
 npm run build
 ```
@@ -42,8 +50,8 @@ Add the following to your Cursor `mcp.json`:
 {
     "mcpServers": {
         "jj-planner": {
-            "command": "node",
-            "args": ["/absolute/path/to/jj-planner-mcp/dist/index.js"],
+            "command": "npx",
+            "args": ["-y", "@vncy/jj-planner-mcp"],
             "env": {
                 "JJ_PLANNER_API_BASE_URL": "https://your-backend-url.com",
                 "JJ_PLANNER_API_KEY": "jjp_..."
@@ -61,8 +69,8 @@ Add to your `claude_desktop_config.json` (or Claude Code MCP settings):
 {
     "mcpServers": {
         "jj-planner": {
-            "command": "node",
-            "args": ["/absolute/path/to/jj-planner-mcp/dist/index.js"],
+            "command": "npx",
+            "args": ["-y", "@vncy/jj-planner-mcp"],
             "env": {
                 "JJ_PLANNER_API_BASE_URL": "https://your-backend-url.com",
                 "JJ_PLANNER_API_KEY": "jjp_..."
